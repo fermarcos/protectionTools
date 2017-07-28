@@ -1,0 +1,373 @@
+_____________________________________________________________________
+Analizando /var/lib/pgsql/data/pg_hba.conf
+_____________________________________________________________________
+
+Permisos y propietario 
+	Ejecute  chown root:root /var/lib/pgsql/data/pg_hba.confpara cambiar el propietario
+	Permisos correctos (0600/-rw-------)
+
+Autenticacion
+	Autenticacion -correcto
+
+Bases de datos y Usuario
+	BD y users - correcto
+_____________________________________________________________________
+Analizando /var/lib/pgsql/data/postgresql.conf
+_____________________________________________________________________
+
+Permisos y propietario 
+	Ejecute  chown root:root /var/lib/pgsql/data/postgresql.confpara cambiar el propietario
+	Permisos correctos (0600/-rw-------)
+
+Puerto 
+	Puerto por defecto port=5432
+	Puedes editar tu archivo para cambiar el puerto por defecto
+
+listen_addresses 
+	listen_addresses se encuentra comentado
+	Edita el archivo para descomentar la linea de listen_addresses
+	listen_addresses = '*' 
+	Edita el archivo para que solo determinandas ips puedan acceder a la base de datos
+_____________________________________________________________________
+Analizando /etc/my.cnf
+_____________________________________________________________________
+
+Permisos y propietario 
+	Propietario correcto Uid:(0/root)Gid:(0/root)
+	Permisos: (0644/-rw-r--r--) Incorrectos
+	Ejecute:  chmod 600 /etc/my.cnf para cambiarlos
+
+bind-address 
+	La configuracion de este parametro asegura que no se acepten conexiones remotas, si se necesita hacer una conexion remota, configure para hacer ssh tunel
+	Coloce bind-address = 127.0.0.1
+
+local-infile 
+	Mediante estos permisos se pueden leer ficheros del sistema operativo desde la base de datos, algo comun cuando se explota una inyeccion de codigo SQL.
+	 Para deshabilitar esta funcion se configura la variable local-infile a 0
+
+general_log_file
+	Especifica la direccion del archivo donde contendra el log
+	Especifica la ruta a log general_log_file = /var/log/mysql/mysql.log
+_____________________________________________________________________
+Analizando /etc/php.ini
+_____________________________________________________________________
+
+Permisos y propietario 
+	Propietario correcto Uid:(0/root)Gid:(0/root)
+	Permisos: (0644/-rw-r--r--) Incorrectos
+	Ejecute:  chmod 600 /etc/my.cnf para cambiarlos
+
+allow_fopen_url 
+	Con este paramtro habilitado, permite url remotas
+	Edite su archivo allow_url_fopen=Off
+
+max_input_time
+	Con este parametro se limita el tiempo para procesar entradas que un script PHP pueda ejecutar
+	Edite su archivo max_input_time = 30
+
+max_execution_time
+	max_execution_time -correcto
+
+memory_limit
+	Con este parametro se limita la memoria que puede ocupar un script
+	Edite su archivo memory_limit = 8M
+
+expose_php
+	Con este parametro habilitado se da a conocer la version de php que se tiene
+	Edite su archivo expose_php = Off
+
+post_max_size
+	Con este parametro se limita el tamanio de las peticiones que se hagan, tome en cuenta el parametro upload_max_filesize
+	Edite su archivo post_max_size = 256K
+
+max_input_vars
+	Este parametro limita el numero de variables de los metodos http que aceptara
+	Edite su archivo descomentado la linea max_input_vars = 1000
+
+display_errors
+	display_errors -correcto
+
+display_startup_errors
+	display_errors -correcto
+
+log_errors 
+	Con este parametro habilita el log
+	Edite su archivo log_errors = On
+
+error_log 
+	error_log -correcto
+
+session.cookie_httponly
+	Este parametro ayuda a prevenir XSS
+	Edite su archivo session.cookie_httponly = 1
+_____________________________________________________________________
+Analizando /etc/httpd/conf/httpd.conf
+_____________________________________________________________________
+
+Permisos y propietario 
+	Propietario correcto Uid:(0/root)Gid:(0/root)
+	Permisos correctos (0644/-rw-r--r--)
+
+Server Signature 
+ServerTokens 
+	La configuracion de este parametro permite ver la version del servicio web que tiene. 
+	Edite su archivo de configuracion con ServerSignature Off y ServerTokens Prod
+
+Options Indexes 
+	La configuracion de este parametro permite ver listar lo que contiene el directorio. 
+	Edite su archivo de configuracion con Options -Indexes 
+
+Options FollowSymLinks 
+	La configuracion de este parametro permite los enlace simbolicos. 
+	Edite su archivo de configuracion con Options -FollowSymLinks, puede habilitarlo mediante el archivo .htaccess  
+
+KeepAlive 
+	La configuracion de este parametro permite habilitar el tiempo de peticiones al servidor. 
+	Edite su archivo de configuracion con KeepAlive On
+
+KeepAliveTimeout 
+	La configuracion de este parametro permite limitar el numero de segundos que se puede tardar una pagina en cargar. 
+	Edite su archivo de configuracion con KeepAliveTimeout de 2 a 4
+_____________________________________________________________________
+Analizando /etc/httpd/conf.d/awstats.conf
+_____________________________________________________________________
+
+Directory 
+
+	Options None 
+		Esta opcion no permitira a los usuarios activar ninguna caracteristica opcional
+		Edite su archivo y en la etiqueta de Directory agregue Options None
+
+	Order deny,allow 
+		Este es el orden en que se procesaran las directivas "Denegar" y "Permitir". Aqui va a "negar" primero y "permitir" a continuacion.
+		Edite su archivo y en la etiqueta de Directory agregue Order deny,allow
+
+	Deny from all
+		Esto denegara la solicitud de todo el mundo al directorio en cuestion, nadie podra acceder a tal directorio.
+		Edite su archivo y en la etiqueta de Directory agregue Deny from all
+
+Options Indexes 
+	La configuracion de este parametro permite listar lo que contiene el directorio. 
+	Para evitar esto, edite su archivo de configuracion con Options -Indexes 
+
+LimitRequestBody 
+	La configuracion de este parametro permite limitar las peticiones que se puedan realizar. 
+	Edite su archivo de configuracion con LimitRequestBody 512000 [Este numero es de acuerdo a tus necesidades]
+_____________________________________________________________________
+Analizando /etc/httpd/conf.d/mod_dnssd.conf
+_____________________________________________________________________
+
+Directory 
+
+	Options None 
+		Esta opcion no permitira a los usuarios activar ninguna caracteristica opcional
+		Edite su archivo y en la etiqueta de Directory agregue Options None
+
+	Order deny,allow 
+		Este es el orden en que se procesaran las directivas "Denegar" y "Permitir". Aqui va a "negar" primero y "permitir" a continuacion.
+		Edite su archivo y en la etiqueta de Directory agregue Order deny,allow
+
+	Deny from all
+		Esto denegara la solicitud de todo el mundo al directorio en cuestion, nadie podra acceder a tal directorio.
+		Edite su archivo y en la etiqueta de Directory agregue Deny from all
+
+Options Indexes 
+	La configuracion de este parametro permite listar lo que contiene el directorio. 
+	Para evitar esto, edite su archivo de configuracion con Options -Indexes 
+
+LimitRequestBody 
+	La configuracion de este parametro permite limitar las peticiones que se puedan realizar. 
+	Edite su archivo de configuracion con LimitRequestBody 512000 [Este numero es de acuerdo a tus necesidades]
+_____________________________________________________________________
+Analizando /etc/httpd/conf.d/php.conf
+_____________________________________________________________________
+
+Directory 
+
+	Options None 
+		Esta opcion no permitira a los usuarios activar ninguna caracteristica opcional
+		Edite su archivo y en la etiqueta de Directory agregue Options None
+
+	Order deny,allow 
+		Este es el orden en que se procesaran las directivas "Denegar" y "Permitir". Aqui va a "negar" primero y "permitir" a continuacion.
+		Edite su archivo y en la etiqueta de Directory agregue Order deny,allow
+
+	Deny from all
+		Esto denegara la solicitud de todo el mundo al directorio en cuestion, nadie podra acceder a tal directorio.
+		Edite su archivo y en la etiqueta de Directory agregue Deny from all
+
+Options Indexes 
+	La configuracion de este parametro permite listar lo que contiene el directorio. 
+	Para evitar esto, edite su archivo de configuracion con Options -Indexes 
+
+LimitRequestBody 
+	La configuracion de este parametro permite limitar las peticiones que se puedan realizar. 
+	Edite su archivo de configuracion con LimitRequestBody 512000 [Este numero es de acuerdo a tus necesidades]
+_____________________________________________________________________
+Analizando /etc/httpd/conf.d/ssl.conf
+_____________________________________________________________________
+
+Directory 
+
+	Options None 
+		Esta opcion no permitira a los usuarios activar ninguna caracteristica opcional
+		Edite su archivo y en la etiqueta de Directory agregue Options None
+
+	Order deny,allow 
+		Este es el orden en que se procesaran las directivas "Denegar" y "Permitir". Aqui va a "negar" primero y "permitir" a continuacion.
+		Edite su archivo y en la etiqueta de Directory agregue Order deny,allow
+
+	Deny from all
+		Esto denegara la solicitud de todo el mundo al directorio en cuestion, nadie podra acceder a tal directorio.
+		Edite su archivo y en la etiqueta de Directory agregue Deny from all
+
+Options Indexes 
+	La configuracion de este parametro permite listar lo que contiene el directorio. 
+	Para evitar esto, edite su archivo de configuracion con Options -Indexes 
+
+LimitRequestBody 
+	La configuracion de este parametro permite limitar las peticiones que se puedan realizar. 
+	Edite su archivo de configuracion con LimitRequestBody 512000 [Este numero es de acuerdo a tus necesidades]
+_____________________________________________________________________
+Analizando /etc/httpd/conf.d/welcome.conf
+_____________________________________________________________________
+
+Directory 
+
+	Options None 
+		Esta opcion no permitira a los usuarios activar ninguna caracteristica opcional
+		Edite su archivo y en la etiqueta de Directory agregue Options None
+
+	Order deny,allow 
+		Este es el orden en que se procesaran las directivas "Denegar" y "Permitir". Aqui va a "negar" primero y "permitir" a continuacion.
+		Edite su archivo y en la etiqueta de Directory agregue Order deny,allow
+
+	Deny from all
+		Esto denegara la solicitud de todo el mundo al directorio en cuestion, nadie podra acceder a tal directorio.
+		Edite su archivo y en la etiqueta de Directory agregue Deny from all
+
+Options Indexes 
+	La configuracion de este parametro permite listar lo que contiene el directorio. 
+	Para evitar esto, edite su archivo de configuracion con Options -Indexes 
+
+LimitRequestBody 
+	La configuracion de este parametro permite limitar las peticiones que se puedan realizar. 
+	Edite su archivo de configuracion con LimitRequestBody 512000 [Este numero es de acuerdo a tus necesidades]
+_____________________________________________________________________
+Analizando /etc/nginx/nginx.conf
+_____________________________________________________________________
+
+Controlling Buffer Overflow Attacks
+
+client_body_buffer_size
+	La configuracion de este parametro permite limitar el tamanio del buffer del cuerpo de la peticion. 
+	Edite su archivo de configuracion con client_body_buffer_size de 1K a 4K
+
+client_header_buffer_size
+	La configuracion de este parametro permite limitar el tamanio del header de la peticion. 
+	Edite su archivo de configuracion con client_header_buffer_size de 1K a 4K
+
+client_max_body_size
+	La configuracion de este parametro permite limitar el tamanio maximo del cuerpo de la peticion. 
+	Edite su archivo de configuracion con client_body_buffer_size de 1K a 4K
+
+client_body_timeout
+	La configuracion de este parametro permite limitar el tiempo de interaccion con el usuario, sino manda nada, lo redirige Request Time Out. 
+	Edite su archivo de configuracion con client_body_timeout 10
+
+client_header_timeout
+	La configuracion de este parametro permite limitar el tiempo de lectura de peticion del cliente, despues de este tiempo lo redirige Request Time Out. 
+	Edite su archivo de configuracion con client_header_timeout 10
+
+keepalive_timeout
+	La configuracion de este parametro permite limitar el tiempo de vida con el cliente 
+	Edite su archivo de configuracion con keepalive_timeout 5
+
+send_timeout
+	La configuracion de este parametro permite asignar el tiempo de respuesta al cliente 
+	Edite su archivo de configuracion con send_timeout 5
+_____________________________________________________________________
+Analizando /etc/nginx/conf.d/drupal.conf
+_____________________________________________________________________
+
+request_method 
+	Esta opcion permitira permitir las peticiones seleccionadas
+	Edite su archivo y en una sentencia condicional agregue los metodos que requiera $request_method
+
+http_user_agent 
+	Esta opcion permitira permitira bloquear los user_agent y robots seleccionados
+	Edite su archivo y en una sentencia condicional agregue los user_agents que quiere bloquear $http_user_agent
+
+SSL
+	ssl -correct 
+_____________________________________________________________________
+Analizando /etc/nginx/conf.d/prueba.com.conf
+_____________________________________________________________________
+
+request_method 
+	Esta opcion permitira permitir las peticiones seleccionadas
+	Edite su archivo y en una sentencia condicional agregue los metodos que requiera $request_method
+
+http_user_agent 
+	Esta opcion permitira permitira bloquear los user_agent y robots seleccionados
+	Edite su archivo y en una sentencia condicional agregue los user_agents que quiere bloquear $http_user_agent
+
+SSL
+	ssl -correct 
+_____________________________________________________________________
+Analizando /etc/nginx/conf.d/ssl.conf
+_____________________________________________________________________
+
+request_method 
+	Esta opcion permitira permitir las peticiones seleccionadas
+	Edite su archivo y en una sentencia condicional agregue los metodos que requiera $request_method
+
+http_user_agent 
+	Esta opcion permitira permitira bloquear los user_agent y robots seleccionados
+	Edite su archivo y en una sentencia condicional agregue los user_agents que quiere bloquear $http_user_agent
+
+SSL
+	Esta opcion permite usar una conexion web segura
+	Edite su archivo y agregue listen 443 ssl, ademas de sus certificados
+_____________________________________________________________________
+Analizando /etc/nginx/conf.d/virtual.conf
+_____________________________________________________________________
+
+request_method 
+	Esta opcion permitira permitir las peticiones seleccionadas
+	Edite su archivo y en una sentencia condicional agregue los metodos que requiera $request_method
+
+http_user_agent 
+	Esta opcion permitira permitira bloquear los user_agent y robots seleccionados
+	Edite su archivo y en una sentencia condicional agregue los user_agents que quiere bloquear $http_user_agent
+
+SSL
+	Esta opcion permite usar una conexion web segura
+	Edite su archivo y agregue listen 443 ssl, ademas de sus certificados
+_____________________________________________________________________
+Analizando /etc/nginx/conf.d/wordpress.conf
+_____________________________________________________________________
+
+request_method 
+	Esta opcion permitira permitir las peticiones seleccionadas
+	Edite su archivo y en una sentencia condicional agregue los metodos que requiera $request_method
+
+http_user_agent 
+	Esta opcion permitira permitira bloquear los user_agent y robots seleccionados
+	Edite su archivo y en una sentencia condicional agregue los user_agents que quiere bloquear $http_user_agent
+
+SSL
+	ssl -correct 
+_____________________________________________________________________
+Analizando /var/www/html/wordpress/wp-config.php
+_____________________________________________________________________
+
+readme.html 
+	El tener este archivo te expone a que puedan observar la version de tu wordpress
+	Elimina el archivo readme.html
+
+auto_updates 
+	Este parametro permite tener actualizacaciones automaticas del core de wordpress
+	Edita tu archuivo y agrega add_filter( 'auto_update_core', '__return_true' );	Este parametro permite tener actualizacaciones automaticas del core de wordpress
+	Edita tu archuivo y agrega add_filter( 'auto_update_plugin', '__return_true' );	Este parametro permite tener actualizacaciones automaticas del core de wordpress
+	Edita tu archuivo y agrega add_filter( 'auto_update_theme', '__return_true' );
