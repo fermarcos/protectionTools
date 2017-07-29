@@ -32,7 +32,7 @@ echo -e "$Cyan \nDetecting System.. $Color_Off"
 
 DISTRC=`grep "^Cen" /etc/centos-release | awk '{print $1}'`
 VERSIONC=`awk '{print $3}' /etc/centos-release | cut -d"". -f1`
-VERSIONC7 = `awk '{print $4}' /etc/centos-release | cut -d "." -f1`
+VERSIONC7=`awk '{print $4}' /etc/centos-release | cut -d "." -f1`
 DISTR=`grep -E "^ID=" /etc/*release | cut -d "=" -f2 |sed -r 's/"//g'` 
 VERSION=`grep -E "^VERSION_ID=" /etc/*release | cut -d "=" -f2 |sed -r 's/"//g'`
 
