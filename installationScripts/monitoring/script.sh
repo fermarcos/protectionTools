@@ -30,8 +30,74 @@ fi
 #Detecting Operative System
 echo -e "$Cyan \nDetecting System.. $Color_Off"
 
-DISTR=`grep -E "^ID=" /etc/*release | cut -d "=" -f2 |sed -r 's/"//g'`
+DISTRC=`grep "^Cen" /etc/centos-release | awk '{print $1}'`
+VERSIONC=`awk '{print $3}' /etc/centos-release | cut -d"". -f1`
+VERSIONC7 = `awk '{print $4}' /etc/centos-release | cut -d "." -f1`
+DISTR=`grep -E "^ID=" /etc/*release | cut -d "=" -f2 |sed -r 's/"//g'` 
 VERSION=`grep -E "^VERSION_ID=" /etc/*release | cut -d "=" -f2 |sed -r 's/"//g'`
+
+case $DISTRC in
+  CentOS)
+       echo "CentOS "$VERSION $VERSIONC" detected"
+       if [[ "$VERSIONC" == "7" ]]; then
+         if [ -e "centos7/awstats.py" ]; then
+          python centos/awstats.py
+         else
+           echo -e "$Red Script awstats.py not found $Color_Off"
+           read -n 1 -s -r -p "Press [s|S] to exit: [Continue]" op
+           echo $op
+           if [[ "$op" == "s" || "$op" == "S" ]]; then
+             exit 1
+           fi
+           echo -e "\n"
+         fi
+       fi
+       if [[ "$VERSIONC" == "6" ]]; then
+         if [ -e "centos/awstats.py" ]; then
+           python centos/awstats.py
+         else
+           echo -e "$Red Script awstats.py not found $Color_Off"
+           read -n 1 -s -r -p "Press [s|S] to exit: [Continue]" op
+           echo $op
+           if [[ "$op" == "s" || "$op" == "S" ]]; then
+             exit 1
+           fi
+           echo -e "\n"
+         fi
+       fi
+       if [ -e "centos/fail2ban.py" ]; then
+         python centos/fail2ban.py
+       else
+         echo -e "\n $Red Script fail2ban.py not found $Color_Off"
+         read -n 1 -s -r -p "Press [s|S] to exit: [Continue] " op
+         if [[ "$op" == "s" || "$op" == "S" ]]; then
+           exit 1
+         fi
+         echo -e "\n"
+       fi
+       if [ -e "centos/logwatch.py" ]; then
+         python centos/logwatch.py
+       else
+         echo -e "\n $Red Script logwatch.py not found $Color_Off"
+         read -n 1 -s -r -p "Press [s|S] to exit: [Continue] " op
+         if [[ "$op" == "s" || "$op" == "S" ]]; then
+           exit 1
+         fi
+         echo -e "\n"
+
+       fi
+       if [ -e "centos/ossec.py" ]; then
+         python centos/ossec.py
+       else
+         echo -e "\n $Red Script ossec.py not found $Color_Off"
+         read -n 1 -s -r -p "Press [s|S] to exit: [Continue] " op
+         if [[ "$op" == "s" || "$op" == "S" ]]; then
+           exit 1
+         fi
+         echo -e "\n"
+       fi
+       ;;
+esac
 
 case $DISTR in
      ubuntu)
@@ -111,66 +177,7 @@ case $DISTR in
             echo -e "\n"
           fi
           ;;
-     centos|rhel)
-          echo "CentOS "$VERSION" detected"
-          if [[ "$VERSION" == "7" ]]; then
-            if [ -e "centos7/awstats.py" ]; then
-            	python centos/awstats.py
-            else
-              echo -e "$Red Script awstats.py not found $Color_Off"
-              read -n 1 -s -r -p "Press [s|S] to exit: [Continue]" op
-              echo $op
-              if [[ "$op" == "s" || "$op" == "S" ]]; then
-                exit 1
-              fi
-              echo -e "\n"
-            fi
-          fi
-          if [[ "$VERSION" == "6" ]]; then
-            if [ -e "centos/awstats.py" ]; then
-              python centos/awstats.py
-            else
-              echo -e "$Red Script awstats.py not found $Color_Off"
-              read -n 1 -s -r -p "Press [s|S] to exit: [Continue]" op
-              echo $op
-              if [[ "$op" == "s" || "$op" == "S" ]]; then
-                exit 1
-              fi
-              echo -e "\n"
-            fi
-          fi
-          if [ -e "centos/fail2ban.py" ]; then
-            python centos/fail2ban.py
-          else
-            echo -e "\n $Red Script fail2ban.py not found $Color_Off"
-            read -n 1 -s -r -p "Press [s|S] to exit: [Continue] " op
-            if [[ "$op" == "s" || "$op" == "S" ]]; then
-              exit 1
-            fi
-            echo -e "\n"
-          fi
-          if [ -e "centos/logwatch.py" ]; then
-            python centos/logwatch.py
-          else
-            echo -e "\n $Red Script logwatch.py not found $Color_Off"
-            read -n 1 -s -r -p "Press [s|S] to exit: [Continue] " op
-            if [[ "$op" == "s" || "$op" == "S" ]]; then
-              exit 1
-            fi
-            echo -e "\n"
 
-          fi
-          if [ -e "centos/ossec.py" ]; then
-            python centos/ossec.py
-          else
-            echo -e "\n $Red Script ossec.py not found $Color_Off"
-            read -n 1 -s -r -p "Press [s|S] to exit: [Continue] " op
-            if [[ "$op" == "s" || "$op" == "S" ]]; then
-              exit 1
-            fi
-            echo -e "\n"
-          fi
-          ;;
      debian)
           echo "Debian "$VERSION" detected"
           if [ -e "ubuntu/awstats.py" ]; then
